@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Digital Ledger Quest: Excel Accounting Game 📊</title>
+    <style>
+        :root {
+            --excel-green: #107c41;
+            --excel-dark: #0b502a;
+            --excel-light: #dff6dd;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-light: #f8fafc;
+            --accent: #f59e0b;
+            --error: #ef4444;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 950px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            padding: 25px;
+            border: 2px solid #334155;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .score-badge {
+            background: #334155;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 15px;
+        }
+
+        /* Excel UI Simulation */
+        .excel-ribbon {
+            background: #f3f2f1;
+            color: #333;
+            border-radius: 8px 8px 0 0;
+            padding: 8px 12px;
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 2px solid #bbb;
+        }
+
+        .ribbon-tab {
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            background: #e1dfdd;
+        }
+
+        .ribbon-tab.active {
+            background: var(--excel-green);
+            color: white;
+        }
+
+        .excel-grid {
+            background: #ffffff;
+            color: #000;
+            border: 1px solid #ccc;
+            font-family: 'Calibri', sans-serif;
+            font-size: 13px;
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .excel-grid th, .excel-grid td {
+            border: 1px solid #d4d4d4;
+            padding: 6px 10px;
+            text-align: left;
+        }
+
+        .excel-grid th {
+            background: #e6e6e6;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+        }
+
+        .excel-grid .header-row {
+            background: var(--excel-green);
+            color: white;
+            font-weight: bold;
+        }
+
+        .stage-container {
+            display: none;
+        }
+
+        .stage-container.active {
+            display: block;
+        }
+
+        .instructions {
+            background: #0f172a;
+            border-left: 4px solid var(--excel-green);
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, var(--excel-green), var(--excel-dark));
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .feedback-box {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .feedback-box.correct {
+            background: rgba(16, 185, 129, 0.2);
+            color: #a7f3d0;
+            border: 1px solid var(--success);
+        }
+
+        .feedback-box.incorrect {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid var(--error);
+        }
+
+        select, input[type="text"] {
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: 1px solid #999;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-card">
+    <div class="header">
+        <div class="title">🟩 The Digital Ledger Quest: Excel Accounting Game</div>
+        <div class="score-badge" id="scoreDisplay">Score: 0 / 100</div>
+    </div>
+
+    <!-- LEVEL 1: Ribbon Tab & Feature Matching -->
+    <div class="stage-container active" id="stage1">
+        <div class="instructions">
+            <b>Level 1: Excel Interface Navigator</b><br>
+            Match each accounting requirement with the correct Excel Ribbon Tab!
+        </div>
+
+        <div class="excel-ribbon">
+            <div class="ribbon-tab active">Home</div>
+            <div class="ribbon-tab active">Formulas</div>
+            <div class="ribbon-tab active">Data</div>
+            <div class="ribbon-tab active">Review</div>
+        </div>
+
+        <table class="excel-grid" style="margin-top: 10px;">
+            <thead>
+                <tr class="header-row">
+                    <th>Accounting Task</th>
+                    <th>Select Correct Ribbon Tab</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1. Apply "Accounting Number Format" to align $ and decimals</td>
+                    <td>
+                        <select id="q1">
+                            <option value="">-- Choose Tab --</option>
+                            <option value="Home">Home Tab</option>
+                            <option value="Formulas">Formulas Tab</option>
+                            <option value="Data">Data Tab</option>
+                            <option value="Review">Review Tab</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2. Use "Trace Precedents" to audit formula dependencies</td>
+                    <td>
+                        <select id="q2">
+                            <option value="">-- Choose Tab --</option>
+                            <option value="Home">Home Tab</option>
+                            <option value="Formulas">Formulas Tab</option>
+                            <option value="Data">Data Tab</option>
+                            <option value="Review">Review Tab</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>3. Set up "Data Validation" to prevent GIGO input errors</td>
+                    <td>
+                        <select id="q3">
+                            <option value="">-- Choose Tab --</option>
+                            <option value="Home">Home Tab</option>
+                            <option value="Formulas">Formulas Tab</option>
+                            <option value="Data">Data Tab</option>
+                            <option value="Review">Review Tab</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>4. Lock journal formulas using "Protect Sheet"</td>
+                    <td>
+                        <select id="q4">
+                            <option value="">-- Choose Tab --</option>
+                            <option value="Home">Home Tab</option>
+                            <option value="Formulas">Formulas Tab</option>
+                            <option value="Data">Data Tab</option>
+                            <option value="Review">Review Tab</option>
+                        </select>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button class="btn-action" onclick="checkStage1()">Check Navigation Answers ➔</button>
+        <div class="feedback-box" id="fb1"></div>
+    </div>
+
+    <!-- LEVEL 2: Digital General Journal Construction -->
+    <div class="stage-container" id="stage2">
+        <div class="instructions">
+            <b>Level 2: General Journal Table Construction</b><br>
+            Complete the Excel Journal table formulas to balance the entry for: <i>"Paid $5,000 Cash for Equipment"</i>.
+        </div>
+
+        <table class="excel-grid">
+            <thead>
+                <tr style="background:#f3f2f1; text-align:center;">
+                    <th>Row</th>
+                    <th>A (Date)</th>
+                    <th>B (Account Title)</th>
+                    <th>C (Debit $)</th>
+                    <th>D (Credit $)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="background:#e6e6e6; text-align:center;"><b>1</b></td>
+                    <td>2026-10-01</td>
+                    <td>Equipment</td>
+                    <td><input type="text" id="j_debit" placeholder="Enter Debit Amount"></td>
+                    <td>$0.00</td>
+                </tr>
+                <tr>
+                    <td style="background:#e6e6e6; text-align:center;"><b>2</b></td>
+                    <td>2026-10-01</td>
+                    <td>Cash</td>
+                    <td>$0.00</td>
+                    <td><input type="text" id="j_credit" placeholder="Enter Credit Amount"></td>
+                </tr>
+                <tr style="font-weight:bold; background:#e2efda;">
+                    <td style="background:#e6e6e6; text-align:center;"><b>3</b></td>
+                    <td colspan="2">TOTAL BALANCE CHECK:</td>
+                    <td>=SUM(C1:C2)</td>
+                    <td>=SUM(D1:D2)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-bottom: 15px;">
+            <label><b>Formula Check:</b> Enter the Excel formula to check if Total Debit equals Total Credit (Cell C3 = D3):</label><br>
+            <input type="text" id="bal_formula" placeholder='e.g., =IF(C3=D3, "Balanced", "Unbalanced")' style="width:100%; margin-top:5px;">
+        </div>
+
+        <button class="btn-action" onclick="checkStage2()">Validate Journal Entry ➔</button>
+        <div class="feedback-box" id="fb2"></div>
+    </div>
+
+    <!-- LEVEL 3: Internal Control & GIGO Challenge -->
+    <div class="stage-container" id="stage3">
+        <div class="instructions">
+            <b>Level 3: Internal Control & GIGO Prevention</b><br>
+            Identify the GIGO vulnerability and select the proper internal control measure in Excel!
+        </div>
+
+        <div style="background:#0f172a; padding:15px; border-radius:8px; margin-bottom:15px;">
+            <p><b>Scenario:</b> A junior clerk typed <code>"Five Thousand"</code> in the Debit column instead of <code>5000</code>. This broke the <code>SUM()</code> function and resulted in invalid financial statements.</p>
+            
+            <p><b>Question:</b> Which feature prevents this error before it happens?</p>
+            <select id="gigo_solution" style="width:100%; padding:8px;">
+                <option value="">-- Select Internal Control --</option>
+                <option value="1">Use "Trace Dependents" after the mistake is made</option>
+                <option value="2">Set "Data Validation" to allow Decimal/Whole Numbers only</option>
+                <option value="3">Apply Conditional Formatting color fills</option>
+                <option value="4">Hide the column containing formula errors</option>
+            </select>
+        </div>
+
+        <button class="btn-action" onclick="checkStage3()">Finish Quest & View Certificate 🏆</button>
+        <div class="feedback-box" id="fb3"></div>
+    </div>
+</div>
+
+<script>
+    let score = 0;
+
+    function checkStage1() {
+        const q1 = document.getElementById('q1').value;
+        const q2 = document.getElementById('q2').value;
+        const q3 = document.getElementById('q3').value;
+        const q4 = document.getElementById('q4').value;
+        const fb = document.getElementById('fb1');
+
+        if (q1 === 'Home' && q2 === 'Formulas' && q3 === 'Data' && q4 === 'Review') {
+            score += 35;
+            document.getElementById('scoreDisplay').innerText = `Score: ${score} / 100`;
+            fb.className = 'feedback-box correct';
+            fb.style.display = 'block';
+            fb.innerHTML = '✅ Perfect! Home (Formatting), Formulas (Trace Precedents), Data (Validation), and Review (Protect Sheet).';
+            setTimeout(() => {
+                document.getElementById('stage1').classList.remove('active');
+                document.getElementById('stage2').classList.add('active');
+            }, 1200);
+        } else {
+            fb.className = 'feedback-box incorrect';
+            fb.style.display = 'block';
+            fb.innerHTML = '❌ Incorrect match. Review ribbon functions from lecture notes!';
+        }
+    }
+
+    function checkStage2() {
+        const debit = document.getElementById('j_debit').value.trim();
+        const credit = document.getElementById('j_credit').value.trim();
+        const formula = document.getElementById('bal_formula').value.trim().toUpperCase();
+        const fb = document.getElementById('fb2');
+
+        const isDebitValid = debit === '5000' || debit === '$5000' || debit === '5,000';
+        const isCreditValid = credit === '5000' || credit === '$5000' || credit === '5,000';
+        const isFormulaValid = formula.includes('IF') && formula.includes('C3=D3');
+
+        if (isDebitValid && isCreditValid && isFormulaValid) {
+            score += 35;
+            document.getElementById('scoreDisplay').innerText = `Score: ${score} / 100`;
+            fb.className = 'feedback-box correct';
+            fb.style.display = 'block';
+            fb.innerHTML = '✅ Excellent! Debits equal Credits ($5,000) and formula correctly checks balance equality.';
+            setTimeout(() => {
+                document.getElementById('stage2').classList.remove('active');
+                document.getElementById('stage3').classList.add('active');
+            }, 1200);
+        } else {
+            fb.className = 'feedback-box incorrect';
+            fb.style.display = 'block';
+            fb.innerHTML = '❌ Ensure Debit = 5000, Credit = 5000, and formula uses IF with C3=D3 balance check.';
+        }
+    }
+
+    function checkStage3() {
+        const sol = document.getElementById('gigo_solution').value;
+        const fb = document.getElementById('fb3');
+
+        if (sol === '2') {
+            score += 30;
+            document.getElementById('scoreDisplay').innerText = `Score: ${score} / 100`;
+            fb.className = 'feedback-box correct';
+            fb.style.display = 'block';
+            fb.innerHTML = '🎉 Congratulations! You completed "The Digital Ledger Quest" with a 100% score!';
+        } else {
+            fb.className = 'feedback-box incorrect';
+            fb.style.display = 'block';
+            fb.innerHTML = '❌ Data Validation is the correct preventive control against text entries in numeric cells.';
+        }
+    }
+</script>
+
+</body>
+</html>
